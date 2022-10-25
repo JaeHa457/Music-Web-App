@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<main id="main">
+    <header>
+        <h1>{{date}}</h1>
+    </header>
+
+    <h2>{{ track.title }}</h2>
+        <p>Track Artist: {{ track.artist.full_name }}</p>
+        <p>Track Album: {{ track.album.title }}</p>
+        <p>Track Genres: {% for genre in track.genres %}{{ genre.name }} {% endfor %}</p>
+        <p>Track Duration: {{ track.track_duration}} seconds </p>
+        <div id="link_bar">
+            <p>Track URL: <a href = "{{ track.track_url }}">{{ track.track_url }}</a></p>
+        </div>
+        <div class="form-wrapper">
+            <form action="{{handler_url}}" method="post">
+                {{form.track_id}} <!-- Need to include this hidden field as it tracks the article being commented. -->
+                {{form.csrf_token}} <!-- Need to include this token - Flask WTForms requires it. -->
+                <br>
+                <div class ="form-field">{{form.review.label}} </br>{{form.review(size = 100, placeholder="type your review", class="textarea", cols="50", rows="6", wrap="hard")}}
+                    {% if form.review.errors %}
+                        <ul class="errors">
+        	            {% for error in form.review.errors %}
+        		            <li>{{error}}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit }}
+            </form>
+        </div>
+        <div style="clear:both">
+            {% for review in track.comments %}
+                <p>{{review.review_text}}, by {{user_name}}, {{review.timestamp}}</p>
+            {% endfor %}
+        </div>
+</main>
+{% endblock %}
